@@ -4,14 +4,18 @@
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-8">
-            <div class="card">
+            @forelse($posts as $post)
+                <div class="card mb-1">
 {{--                <img class="card-img-top" src="..." alt="Card image cap">--}}
-                <div class="card-body">
-                    <h5 class="card-title">Post title</h5>
-                    <p class="card-text">Short description of post...</p>
-                    <a href="#" class="btn btn-primary">View Post</a>
+                    <div class="card-body">
+                        <h5 class="card-title">{{ $post->title }}</h5>
+                        <p class="card-text">{{ $post->description }}</p>
+                        <a href="#" class="btn btn-primary float-right">View Post</a>
+                    </div>
                 </div>
-            </div>
+            @empty
+                <div class="card-title text-center py-2">No posts yet, please check back later...</div>
+            @endforelse
         </div>
     </div>
 </div>

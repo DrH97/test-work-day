@@ -3,8 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Post;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 class PostController extends Controller
 {
@@ -29,6 +32,7 @@ class PostController extends Controller
     public function create()
     {
         //
+        return view('dashboard.edit');
     }
 
     /**
@@ -40,6 +44,22 @@ class PostController extends Controller
     public function store(Request $request)
     {
         //
+        $validator = Validator::make($request->all(), [
+            'title' => 'required',
+            'description' => 'required',
+        ]);
+
+        $post = new Post();
+        $post->user_id = Auth::id();
+        $post->title = $request->title;
+        $post->description = $request->description;
+        $post->likes = 0;
+        $post->views = 0;
+
+        $post->save();
+
+        return redirect('dashboard');
+
     }
 
     /**
@@ -50,7 +70,13 @@ class PostController extends Controller
      */
     public function show(Post $post)
     {
-        //
+        //#
+        if (Auth::id() != $post->user_id) {
+            $post->views = $post->views + 1;
+            $post->save();
+        }
+
+        return view('post', compact('post'));
     }
 
     /**
@@ -62,6 +88,8 @@ class PostController extends Controller
     public function edit(Post $post)
     {
         //
+//        $post-
+        return view('dashboard.edit', compact('post'));
     }
 
     /**
@@ -74,6 +102,13 @@ class PostController extends Controller
     public function update(Request $request, Post $post)
     {
         //
+        $post->title = $request->title;
+        $post->description = $request->description;
+
+        $post->save();
+
+        return redirect('dashboard');
+
     }
 
     /**
@@ -85,5 +120,24 @@ class PostController extends Controller
     public function destroy(Post $post)
     {
         //
+        try {
+            $post->delete();
+        } catch (Exception $e) {
+        }
+
+        return redirect('dashboard');
+    }
+
+    public function like(Request $request, Post $post)
+    {
+        //
+
+//        return $post;
+        $post->likes = $post->likes + 1;
+
+        $post->save();
+
+        return redirect('/');
+
     }
 }

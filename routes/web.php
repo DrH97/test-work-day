@@ -16,3 +16,6 @@ Route::get('/', 'PostController@index')->name('welcome');
 Auth::routes();
 
 Route::get('/dashboard', 'HomeController@index')->name('home');
+
+Route::resource('posts', 'PostController');
+Route::post('/posts/{post}/like', 'PostController@like')->name('posts.like');
